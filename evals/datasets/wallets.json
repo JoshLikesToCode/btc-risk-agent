@@ -1,0 +1,166 @@
+{
+  "built": "2026-10-14",
+  "cases": {
+    "sanctioned": [
+      {
+        "address": "1DbShx4r8i2XesthoDBf5EkYWz5dsKEusV",
+        "expected": "sanctioned",
+        "note": "OFAC SDN: ANDREYEV, Anton Nikolaeyvich (CYBER2] [ELECTION-EO13848)"
+      },
+      {
+        "address": "bc1qfg4gfg0y6t6xjnpmlhuwx5k0wlw6nmfzxn2psc",
+        "expected": "sanctioned",
+        "note": "OFAC SDN: ZIMENKOV, Jonatan (RUSSIA-EO14024)"
+      },
+      {
+        "address": "15kZobLkD6HZgEECtz4oS2Vz21XHTnNfSg",
+        "expected": "sanctioned",
+        "note": "OFAC SDN: WU, Huihui (DPRK3)"
+      },
+      {
+        "address": "bc1qx3e2axj3wsfn0ndtvlwmkghmmgm4583nqg8ngk",
+        "expected": "sanctioned",
+        "note": "OFAC SDN: KHATIBI AGHADA, Ahmad (IRGC] [IFSR] [CYBER2)"
+      },
+      {
+        "address": "39Te8MbphSgs7npDJPj2hbNzhke61NTcnB",
+        "expected": "sanctioned",
+        "note": "OFAC SDN: POLYANIN, Yevgeniy Igorevich (CYBER2)"
+      },
+      {
+        "address": "bc1qeth6n6ryxexvkx34wnx3nuynun4474h3j0gkhw",
+        "expected": "sanctioned",
+        "note": "OFAC SDN: CHEN, Zhi (TCO)"
+      },
+      {
+        "address": "15qyVrZvvVGvB7GWiAZ82TNcZ6QWMKu3kx",
+        "expected": "sanctioned",
+        "note": "OFAC SDN: WU, Huihui (DPRK3)"
+      },
+      {
+        "address": "1DH2xDH7TngrDU6LXciprKCBKNcPA1xX8A",
+        "expected": "sanctioned",
+        "note": "OFAC SDN: ZHENG, Fujing (SDNTK)"
+      },
+      {
+        "address": "bc1qw7vfgv3r5vnehafl0y95sclg3uqsj87wxs9ad628yjjcq33cwessr6ndyw",
+        "expected": "sanctioned",
+        "note": "OFAC SDN: CHATEX (CYBER2)"
+      },
+      {
+        "address": "3PiCnZrBvGfWAKQ9hr4cCpfaDjy64yNSpE",
+        "expected": "sanctioned",
+        "note": "OFAC SDN: HYDRA MARKET (CYBER2)"
+      }
+    ],
+    "hop1": [
+      {
+        "address": "bc1qjs6t0qevcul6jm0g3e5078geqd34fy05q4echw",
+        "expected": "high_exposure",
+        "note": "1-hop received_from bc1qfg4gfg0y6t6xjnpmlhuwx5k0wlw6nmfzxn2psc via tx fc37a663d3034535976dcd36495457c35f583b70dff405eb5ffe541cec61ca2c"
+      },
+      {
+        "address": "3Qa2faizCxemQrtDNihdRnyXEZ4gy9HE37",
+        "expected": "high_exposure",
+        "note": "1-hop sent_to bc1qfg4gfg0y6t6xjnpmlhuwx5k0wlw6nmfzxn2psc via tx 55d46c5f5b91472f13d66dea0fee99a3ee2c08fe9b7757e454127264c192060e"
+      },
+      {
+        "address": "1AZEL3cj8JqqFQLg57Yy54G6BZH496KPGf",
+        "expected": "high_exposure",
+        "note": "1-hop sent_to 15kZobLkD6HZgEECtz4oS2Vz21XHTnNfSg via tx 4aa1380c6dcac552019d9b033ccec5f39b5211cb25460eb8839de40e827af92d"
+      },
+      {
+        "address": "bc1p5njvnar4585gku3k5qt6zh80jy7su7c0dv6g0c3avdlzczkt9v0q72tx7t",
+        "expected": "high_exposure",
+        "note": "1-hop sent_to bc1qx3e2axj3wsfn0ndtvlwmkghmmgm4583nqg8ngk via tx 3b97d09208f660b1088632790b6b671ac7f7c9ec9ceff1a7d325dd6c1fa2be07"
+      },
+      {
+        "address": "bc1q689yue0pr2jsve0qzj3h2jkfsd6va5uwudng6w",
+        "expected": "high_exposure",
+        "note": "1-hop received_from bc1qx3e2axj3wsfn0ndtvlwmkghmmgm4583nqg8ngk via tx e2e12dd0b36fdbc8a204635bc8d3471f975bfc732007f3d69275143820187be8"
+      },
+      {
+        "address": "bc1q2mfy6lngqzpzk88q29e2mdv7tl0xl5hgcqufq9",
+        "expected": "high_exposure",
+        "note": "1-hop sent_to bc1qx3e2axj3wsfn0ndtvlwmkghmmgm4583nqg8ngk via tx 9ec0d7c23ce18e75b5c41aac4b1828652e70636488a4ba678aefa45383f88cc8"
+      },
+      {
+        "address": "bc1qjjxd2kffggk4uxca8q5ecdyad2cs7wgw8fafql",
+        "expected": "high_exposure",
+        "note": "1-hop sent_to bc1qx3e2axj3wsfn0ndtvlwmkghmmgm4583nqg8ngk via tx f299313c9d008d392c57ee6e944fc00cc1c3866124f34806dac7feaa4ade646b"
+      },
+      {
+        "address": "3Q2ZKnZZJnbTupPLSBuWwRvcsnLaNvYFKn",
+        "expected": "high_exposure",
+        "note": "1-hop received_from 39Te8MbphSgs7npDJPj2hbNzhke61NTcnB via tx 2a1251bb60ca54c07d6e0c56f3489acea0a28686648180e8462981379ce4b52d"
+      },
+      {
+        "address": "3MuHAqRUiLwGaR69PStV7Hrhh949ws7ew3",
+        "expected": "high_exposure",
+        "note": "1-hop received_from 39Te8MbphSgs7npDJPj2hbNzhke61NTcnB via tx 0defb3a2acfb91ed8b86fdfb50826f43d7c3abbfedf416f9e5be04ecac297597"
+      },
+      {
+        "address": "3F8tmdokZnY6XedV82yLuyEjBuom1nKAGk",
+        "expected": "high_exposure",
+        "note": "1-hop received_from 39Te8MbphSgs7npDJPj2hbNzhke61NTcnB via tx a278ee4d7f84ac2da6e4136803c81d27480d1f9d98a9eb498d2e4e3a8cedabfa"
+      }
+    ],
+    "presumed_clean": [
+      {
+        "address": "bc1qry95rprekk5yrtnzmnfas87d6w5a3xtt0rnkp3",
+        "expected": "low",
+        "note": "random address from latest block (presumed clean, unverified)"
+      },
+      {
+        "address": "3HW7oswv9y3gNBu7zw152fS6toyjtvyTcj",
+        "expected": "low",
+        "note": "random address from latest block (presumed clean, unverified)"
+      },
+      {
+        "address": "34G27Ta6QmB17sDgnzLhYFvD4D1PZLiUf4",
+        "expected": "low",
+        "note": "random address from latest block (presumed clean, unverified)"
+      },
+      {
+        "address": "1H479cdFr1BcNS6hbyzzwQ6AARWSBVk7Uc",
+        "expected": "low",
+        "note": "random address from latest block (presumed clean, unverified)"
+      },
+      {
+        "address": "bc1q5ej9ghfuz55x7lsmxwyqz3vk00xn3tmd9sql8q",
+        "expected": "low",
+        "note": "random address from latest block (presumed clean, unverified)"
+      },
+      {
+        "address": "bc1qunsz7fp6aa9v04hv8qejzkqee2ak00pap03jx5",
+        "expected": "low",
+        "note": "random address from latest block (presumed clean, unverified)"
+      },
+      {
+        "address": "bc1qfklnl7k5cfam5e24fpn9nrtshe4l5jmxncly7f",
+        "expected": "low",
+        "note": "random address from latest block (presumed clean, unverified)"
+      },
+      {
+        "address": "34yv3DeDEESd9dHfYtJVz6G5jLEryYdpcQ",
+        "expected": "low",
+        "note": "random address from latest block (presumed clean, unverified)"
+      },
+      {
+        "address": "172AHCg5c3oCTRSCSfhoEA44nnZtByAzMM",
+        "expected": "low",
+        "note": "random address from latest block (presumed clean, unverified)"
+      },
+      {
+        "address": "3MWAnN4PpgrnNpMSV4mYLW4iu9Nek3SwHo",
+        "expected": "low",
+        "note": "random address from latest block (presumed clean, unverified)"
+      },
+      {
+        "address": "3HVCrh81K66tWUmHFrVwFuACiSYggUms4X",
+        "expected": "low",
+        "note": "random address from latest block (presumed clean, unverified)"
+      }
+    ]
+  }
+}

@@ -1,0 +1,22 @@
+<?xml version="1.0" standalone="yes"?>
+<sdnList xmlns="https://sanctionslistservice.ofac.treas.gov/api/PublicationPreview/exports/XML">
+  <sdnEntry>
+    <uid>1001</uid>
+    <firstName>Example</firstName>
+    <lastName>ENTITY A</lastName>
+    <sdnType>Entity</sdnType>
+    <programList><program>CYBER2</program><program>DPRK3</program></programList>
+    <idList>
+      <id><uid>1</uid><idType>Digital Currency Address - XBT</idType><idNumber>1ExampleBase58AddressAAAAAAAAAAAAAA</idNumber></id>
+      <id><uid>2</uid><idType>Digital Currency Address - ETH</idType><idNumber>0x0000000000000000000000000000000000000000</idNumber></id>
+      <id><uid>3</uid><idType>Digital Currency Address - XBT</idType><idNumber>bc1qexamplebech32addressaaaaaaaaaaaaaaaaaaa</idNumber></id>
+      <id><uid>4</uid><idType>Passport</idType><idNumber>X123</idNumber></id>
+    </idList>
+  </sdnEntry>
+  <sdnEntry>
+    <uid>1002</uid>
+    <lastName>PERSON B</lastName>
+    <sdnType>Individual</sdnType>
+    <programList><program>SDGT</program></programList>
+  </sdnEntry>
+</sdnList>

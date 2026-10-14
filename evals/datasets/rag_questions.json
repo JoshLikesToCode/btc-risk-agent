@@ -1,0 +1,18 @@
+[
+  {"question": "Why is a link that passes through a CoinJoin weaker evidence than a direct link?",
+   "reference": "A CoinJoin combines inputs from many unrelated participants into one transaction with equal-value outputs, so an observer cannot tell which input funded which output. Many unrelated parties share the same transaction, so a link through it is weak evidence."},
+  {"question": "What is a peeling chain?",
+   "reference": "A series of transactions where a large balance is repeatedly spent, sending a small amount to a recipient and returning the large remainder to a fresh change address which is spent in the next transaction."},
+  {"question": "Does a peeling chain by itself prove illicit activity?",
+   "reference": "No. Peeling chains also describe ordinary wallet behaviour such as paying someone and receiving change, so a chain alone is a weak signal; longer chains with consistently small peels to many recipients are more notable."},
+  {"question": "Does the absence of an address from the OFAC SDN list mean it is unrelated to a sanctioned party?",
+   "reference": "No. Listed addresses are not an exhaustive list of what a designated party controls, and designated parties can use addresses that are not listed, so an unlisted address is not evidence of non-involvement."},
+  {"question": "What does the common-input-ownership heuristic assume and when does it fail?",
+   "reference": "It assumes that addresses spent together as inputs of one transaction are controlled by the same entity, since signing needs all keys. It fails for CoinJoin and PayJoin transactions where inputs from different parties are combined on purpose, merging unrelated entities."},
+  {"question": "What is chain-hopping and what should an analyst record when it happens?",
+   "reference": "Chain-hopping converts funds between assets or blockchains through exchanges, swap services or bridges to interrupt the trail. The deposit to the swap service or exchange is the last observable point and should be recorded as an exit."},
+  {"question": "Why should exposure through an exchange address be given little weight?",
+   "reference": "Exchange and other high-volume service addresses have enormous counterparty sets, so almost any address within a few hops has some indirect link to flagged funds; hop-distance exposure through them is weakly informative."},
+  {"question": "What does 'no exposure found' mean for a bounded graph search?",
+   "reference": "It means no exposure was found within the depth and transaction window inspected, not that none exists."}
+]

@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BTC Risk Agent</title>
+<style>
+  :root { --bg:#f6f7f9; --card:#fff; --fg:#14181f; --muted:#5b6575; --line:#dde1e8; --accent:#2457d6;
+          --low:#2e7d4f; --elevated:#b7791f; --high:#c2410c; --critical:#b42318; --none:#5b6575; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#0e1116; --card:#171b22; --fg:#e7eaf0; --muted:#98a2b3; --line:#2a303a; --accent:#6c93ff;
+            --low:#52c27f; --elevated:#e0a93b; --high:#f08a4b; --critical:#ff6b60; --none:#98a2b3; }
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--fg); font:15px/1.5 system-ui, sans-serif; }
+  main { max-width: 860px; margin: 0 auto; padding: 24px 16px 64px; }
+  h1 { font-size: 20px; margin: 0 0 4px; } .sub { color: var(--muted); margin: 0 0 20px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:16px; margin-bottom:16px; }
+  .tabs { display:flex; gap:8px; margin-bottom:12px; }
+  .tab { border:1px solid var(--line); background:var(--card); color:var(--fg); padding:6px 14px; border-radius:8px; cursor:pointer; }
+  .tab[aria-selected="true"] { border-color:var(--accent); color:var(--accent); font-weight:600; }
+  form { display:flex; gap:8px; flex-wrap:wrap; }
+  input[type=text] { flex:1; min-width:240px; padding:9px 11px; border:1px solid var(--line); border-radius:8px;
+                     background:var(--bg); color:var(--fg); font:inherit; font-family:ui-monospace, monospace; }
+  select, button.go { padding:9px 14px; border-radius:8px; border:1px solid var(--line); background:var(--card); color:var(--fg); font:inherit; }
+  button.go { background:var(--accent); color:#fff; border-color:var(--accent); cursor:pointer; }
+  button.go:disabled { opacity:.5; cursor:default; }
+  .badge { display:inline-block; padding:2px 10px; border-radius:999px; color:#fff; font-weight:600; font-size:13px; }
+  .v-sanctioned { background:var(--critical); } .v-high_exposure { background:var(--high); }
+  .v-elevated { background:var(--elevated); } .v-low { background:var(--low); } .v-insufficient_data { background:var(--none); }
+  .steps { list-style:none; padding:0; margin:0; }
+  .steps li { padding:6px 0; border-bottom:1px solid var(--line); }
+  .steps li:last-child { border-bottom:0; } .steps b { font-family:ui-monospace, monospace; }
+  .muted { color:var(--muted); } .err { color:var(--critical); }
+  .finding { border-left:3px solid var(--line); padding:4px 0 4px 12px; margin:10px 0; }
+  .finding code, .ev code { font-size:12px; word-break:break-all; }
+  .sev-high, .sev-critical { border-left-color:var(--high); } .sev-medium { border-left-color:var(--elevated); }
+  pre { white-space:pre-wrap; word-break:break-word; margin:0; font:13px/1.45 ui-monospace, monospace; }
+  .hint { font-size:13px; color:var(--muted); margin-top:8px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>BTC Risk Agent</h1>
+  <p class="sub">Exposure triage from public data. Output is a signal for a human analyst, not a conclusion about anyone.</p>
+
+  <div class="tabs" role="tablist">
+    <button class="tab" role="tab" aria-selected="true" data-tab="inv">Investigate</button>
+    <button class="tab" role="tab" aria-selected="false" data-tab="ask">Ask the corpus</button>
+  </div>
+
+  <section id="inv" class="card">
+    <form id="invForm">
+      <input type="text" id="addr" placeholder="Bitcoin address" required autocomplete="off" spellcheck="false">
+      <select id="mode" title="Agent mode">
+        <option value="quick">Quick (deterministic, no LLM)</option>
+        <option value="multi" selected>Multi-agent</option>
+        <option value="single">Single agent</option>
+      </select>
+      <button class="go" id="invBtn" type="submit">Run</button>
+    </form>
+    <p class="hint">Multi-agent and single-agent modes call the LLM and need OPENAI_API_KEY on the server. Live chain lookups can take a minute.</p>
+  </section>
+
+  <section id="ask" class="card" hidden>
+    <form id="askForm">
+      <input type="text" id="q" placeholder="e.g. Why is a CoinJoin link weaker evidence?" required>
+      <button class="go" id="askBtn" type="submit">Ask</button>
+    </form>
+  </section>
+
+  <section id="progress" class="card" hidden><ul class="steps" id="steps"></ul></section>
+  <section id="result" class="card" hidden></section>
+</main>
+<script>
+const $ = (id) => document.getElementById(id);
+const el = (tag, props = {}, ...kids) => {
+  const n = document.createElement(tag);
+  Object.assign(n, props);
+  kids.flat().forEach((k) => n.append(k));
+  return n;
+};
+document.querySelectorAll(".tab").forEach((t) => t.addEventListener("click", () => {
+  document.querySelectorAll(".tab").forEach((x) => x.setAttribute("aria-selected", x === t));
+  $("inv").hidden = t.dataset.tab !== "inv";
+  $("ask").hidden = t.dataset.tab !== "ask";
+  $("progress").hidden = $("result").hidden = true;
+}));
+
+function reset() { $("steps").replaceChildren(); $("progress").hidden = false; $("result").hidden = true; $("result").replaceChildren(); }
+function step(name, text) { $("steps").append(el("li", {}, el("b", { textContent: name }), el("span", { className: "muted", textContent: "  " + text }))); }
+function fail(msg) { $("result").hidden = false; $("result").replaceChildren(el("p", { className: "err", textContent: msg })); }
+function summarize(name, u) {
+  if (name === "triage") return "deterministic assessment done";
+  if (name === "supervisor") { const p = u.plan || {}; return `plan: ${(p.chain_tasks||[]).length} chain, ${(p.intel_tasks||[]).length} intel, ${(p.research_questions||[]).length} research`; }
+  if (name === "verifier") return u.verification.passed ? "verification passed" : "verification failed: " + u.verification.problems.join("; ");
+  if (name === "analyst") return "draft written";
+  return "done";
+}
+
+function renderAssessment(a) {
+  const r = $("result"); r.hidden = false;
+  r.replaceChildren(
+    el("p", {}, el("span", { className: "badge v-" + a.verdict, textContent: a.verdict }), el("span", { textContent: `  score ${a.score}/100` })),
+    ...(a.direct_match ? [el("p", { textContent: "Direct OFAC SDN match." })] : []),
+    ...a.exposures.slice(0, 5).map((e) => el("p", { textContent: `${e.hops}-hop ${e.direction} ${e.sanctioned_address} (${e.entity_name}, ${e.program})${e.via_coinjoin ? " via CoinJoin (discounted)" : ""}` })),
+    ...a.signals.map((s) => el("p", { className: "muted", textContent: `${s.kind}: ${s.description}` })),
+    el("p", { className: "muted", textContent: `Coverage: ${a.nodes} addresses, ${a.txs_analyzed} txs analyzed${a.truncated ? " (truncated)" : ""}.` }),
+    el("ul", {}, a.limitations.map((l) => el("li", { className: "muted", textContent: l })))
+  );
+}
+
+function renderReport(rep) {
+  const r = $("result"); r.hidden = false;
+  const v = rep.verification;
+  r.replaceChildren(
+    el("p", {}, el("span", { className: "badge v-" + rep.verdict, textContent: rep.verdict }), el("span", { textContent: `  score ${rep.score}/100` })),
+    el("p", { textContent: rep.summary }),
+    ...rep.findings.map((f) => el("div", { className: "finding sev-" + f.severity },
+      el("div", { textContent: `[${f.severity}] ${f.claim}` }),
+      el("div", { className: "ev muted" }, f.evidence_ids.map((id) => el("code", { textContent: id + " ", title: rep.evidence[id] || "unknown evidence id" }))))),
+    el("h4", { textContent: "Recommended" }), el("ul", {}, rep.recommended_actions.map((a) => el("li", { textContent: a }))),
+    el("h4", { textContent: "Limitations" }), el("ul", {}, rep.limitations.map((l) => el("li", { className: "muted", textContent: l }))),
+    el("p", { className: v.passed ? "muted" : "err", textContent: v.passed ? "Verification passed: every finding cites gathered evidence." : "Verification FAILED: " + v.problems.join("; ") })
+  );
+}
+
+$("invForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const address = $("addr").value.trim(), mode = $("mode").value;
+  $("invBtn").disabled = true; reset();
+  try {
+    if (mode === "quick") {
+      step("assess", "running deterministic analysis…");
+      const res = await fetch("/api/assess", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ address }) });
+      if (!res.ok) throw new Error((await res.json()).detail || res.statusText);
+      renderAssessment(await res.json());
+    } else {
+      const es = new EventSource(`/api/investigate?address=${encodeURIComponent(address)}&mode=${mode}`);
+      const done = () => { es.close(); $("invBtn").disabled = false; };
+      es.addEventListener("node", (ev) => { const d = JSON.parse(ev.data); step(d.name, summarize(d.name, d.update)); });
+      es.addEventListener("report", (ev) => { renderReport(JSON.parse(ev.data)); done(); });
+      es.addEventListener("error", (ev) => { if (ev.data) fail(JSON.parse(ev.data).message); else if (es.readyState === 2 || es.readyState === 0) fail("Request failed (is OPENAI_API_KEY set on the server?)"); done(); });
+      return;
+    }
+  } catch (err) { fail(err.message); }
+  $("invBtn").disabled = false;
+});
+
+$("askForm").addEventListener("submit", async (e) => {
+  e.preventDefault(); $("askBtn").disabled = true; reset(); $("progress").hidden = true;
+  try {
+    const res = await fetch("/api/ask", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ question: $("q").value }) });
+    if (!res.ok) throw new Error((await res.json()).detail || res.statusText);
+    const d = await res.json();
+    $("result").hidden = false;
+    $("result").replaceChildren(el("pre", { textContent: d.answer }), el("p", { className: "muted", textContent: "sources: " + d.chunk_ids.join(", ") }));
+  } catch (err) { fail(err.message); }
+  $("askBtn").disabled = false;
+});
+</script>
+</body>
+</html>

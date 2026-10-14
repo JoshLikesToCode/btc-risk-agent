@@ -39,3 +39,21 @@ def test_unlisted_address_returns_none(sanctions):
 
 def test_short_or_blank_rows_are_skipped():
     assert len(SanctionsList.from_csv_text("\n1,2,3\n")) == 0
+
+
+XML_FIXTURE = Path(__file__).parent / "fixtures" / "sdn_sample.xml"
+
+
+def test_xml_parser_extracts_only_xbt_with_name_and_programs():
+    s = SanctionsList.from_xml(XML_FIXTURE)
+    assert len(s) == 2
+    entry = s.lookup("1ExampleBase58AddressAAAAAAAAAAAAAA")
+    assert entry.entity_name == "ENTITY A, Example"
+    assert entry.program == "CYBER2, DPRK3"
+    assert entry.ent_num == "1001"
+    assert s.lookup("BC1QEXAMPLEBECH32ADDRESSAAAAAAAAAAAAAAAAAAA") is not None
+
+
+def test_csv_parser_drops_truncated_address_fragments():
+    row = '1,"X",-0- ,"CYBER2",-0- ,-0- ,-0- ,-0- ,-0- ,-0- ,-0- ,"Digital Currency Address - XBT 1Gq"'
+    assert len(SanctionsList.from_csv_text(row)) == 0

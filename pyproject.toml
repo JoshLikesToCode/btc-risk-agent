@@ -12,7 +12,17 @@ dependencies = [
     "langchain",
     "langfuse",
     "ragas",
+    "networkx>=3.7",
+    "pypdf>=6.20.1",
+    "langchain-openai>=1.7.2",
+    "langchain-postgres>=0.0.19",
+    "psycopg[binary]>=3.3.6",
+    "fastapi>=0.143.1",
+    "uvicorn>=0.54.0",
 ]
+
+[project.scripts]
+btc-risk = "btc_risk.cli:main"
 
 [dependency-groups]
 dev = ["pytest", "pytest-asyncio", "respx", "ruff"]
@@ -26,7 +36,10 @@ packages = ["src/btc_risk"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-markers = ["eval: slow evals that call an LLM or the network (deselect with -m 'not eval')"]
+markers = [
+    "eval: live-network evals (chain data); run with `pytest evals -m eval`",
+    "llm_eval: evals that call the OpenAI API and Postgres; run with `pytest evals -m llm_eval`",
+]
 
 [tool.ruff]
 line-length = 100
@@ -34,3 +47,4 @@ src = ["src", "tests"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "B", "UP"]
+ignore = ["E501"]  # the formatter wraps code; long strings are prompts
